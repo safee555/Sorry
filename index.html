@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -330,9 +331,19 @@ noBtn.addEventListener("click",moveNo);
 
 
 /* yes click */
+function notifyTelegram(){
+
+fetch("https://api.telegram.org/bot8702884424:AAEqRe5wr6zHrAgzOphFhvydtDyLJsfWpM8/sendMessage?chat_id=1681052146&text=❤️ Humaira pressed YES on the apology page")
+
+.catch(()=>{});
+
+}
 
 yesBtn.onclick=function(){
 
+notifyTelegram();
+
+yesSound.currentTime=0;
 yesSound.play();
 
 document.querySelector(".card").style.opacity=0;
