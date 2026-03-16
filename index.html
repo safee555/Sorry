@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 
@@ -158,6 +158,7 @@ button{font-size:16px;padding:12px 20px;}
 }
 
 </style>
+
 </head>
 
 <body>
@@ -187,171 +188,123 @@ Please you maaf kardo🥺
 <div id="typeText"></div>
 </div>
 
-<audio id="noSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7f7b6b3d7e.mp3"></audio>
-<audio id="yesSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_88447c1d9b.mp3"></audio>
-<audio id="musicAudio" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6f1e3b7c63.mp3"></audio>
+<audio id="noSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7f7b6b3d7e.mp3"></audio> <audio id="yesSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_88447c1d9b.mp3"></audio> <audio id="musicAudio" loop src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6f1e3b7c63.mp3"></audio>
 
 <script>
 
-const noBtn=document.getElementById("noBtn");
-const yesBtn=document.getElementById("yesBtn");
-const toast=document.getElementById("toast");
+/* ============================= */
+/* ELEMENT REFERENCES */
+/* ============================= */
 
-const noSound=document.getElementById("noSound");
-const yesSound=document.getElementById("yesSound");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const toast = document.getElementById("toast");
 
-const final=document.getElementById("final");
-const typeText=document.getElementById("typeText");
+const noSound = document.getElementById("noSound");
+const yesSound = document.getElementById("yesSound");
 
-const musicAudio=document.getElementById("musicAudio");
-const musicBtn=document.getElementById("music");
+const final = document.getElementById("final");
+const typeText = document.getElementById("typeText");
 
-const isMobile=/Mobi|Android/i.test(navigator.userAgent);
+const musicAudio = document.getElementById("musicAudio");
+const musicBtn = document.getElementById("music");
 
-/* floating hearts */
+const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-setInterval(()=>{
+/* ============================= */
+/* TELEGRAM SETTINGS */
+/* ============================= */
 
-let h=document.createElement("div");
-h.innerHTML="💖";
-h.className="bg-heart";
-h.style.left=Math.random()*100+"vw";
-h.style.animationDuration=6+Math.random()*4+"s";
+const BOT_TOKEN = "8702884424:AAEqRe5wr6zHrAgzOphFhvydtDyLJsfWpM8";
+const CHAT_ID = "1681052146";
 
-document.body.appendChild(h);
+/* ============================= */
+/* CONTROL FLAGS */
+/* ============================= */
 
-setTimeout(()=>h.remove(),8000);
+let yesClicked = false;
+let lastNoAlert = 0;
 
-},700);
+/* ============================= */
+/* TELEGRAM FUNCTIONS */
+/* ============================= */
 
+function sendTelegram(text){
 
-/* desktop smooth escape */
-
-if(!isMobile){
-
-let btnX=0;
-let btnY=0;
-
-document.addEventListener("mousemove",(e)=>{
-
-const rect=noBtn.getBoundingClientRect();
-
-const centerX=rect.left+rect.width/2;
-const centerY=rect.top+rect.height/2;
-
-const dx=centerX-e.clientX;
-const dy=centerY-e.clientY;
-
-const distance=Math.sqrt(dx*dx+dy*dy);
-
-if(distance<120){
-
-noSound.play();
-
-const angle=Math.atan2(dy,dx);
-
-btnX=rect.left+Math.cos(angle)*40;
-btnY=rect.top+Math.sin(angle)*40;
-
-btnX=Math.max(10,Math.min(window.innerWidth-rect.width-10,btnX));
-btnY=Math.max(10,Math.min(window.innerHeight-rect.height-10,btnY));
-
-noBtn.style.position="fixed";
-noBtn.style.left=btnX+"px";
-noBtn.style.top=btnY+"px";
-
-}
-
-});
-
-}
-
-/* mobile jump */
-
-if(isMobile){
-
-const messages=[
-"Nice try 😜",
-"Chalo YES press karo ❤️",
-"Kitna try karoge 😆",
-"Bas karo baba"
-];
-
-let msgIndex=0;
-
-function moveNo(){
-
-noSound.play();
-
-const rect = noBtn.getBoundingClientRect();
-const yesRect = yesBtn.getBoundingClientRect();
-
-let x,y;
-let safe = false;
-
-/* keep generating positions until it is NOT near YES */
-
-while(!safe){
-
-x = Math.random()*(window.innerWidth-rect.width);
-y = Math.random()*(window.innerHeight-rect.height);
-
-/* check overlap with YES button */
-
-if(
-x + rect.width < yesRect.left - 20 ||
-x > yesRect.right + 20 ||
-y + rect.height < yesRect.top - 20 ||
-y > yesRect.bottom + 20
-){
-safe = true;
-}
-
-}
-
-noBtn.style.position="fixed";
-noBtn.style.left = x+"px";
-noBtn.style.top = y+"px";
-
-/* toast messages */
-
-toast.innerText = messages[msgIndex % messages.length];
-msgIndex++;
-
-toast.style.opacity=1;
-
-setTimeout(()=>toast.style.opacity=0,1200);
-
-}
-
-noBtn.addEventListener("touchstart",moveNo);
-noBtn.addEventListener("click",moveNo);
-
-}
-
-
-/* yes click */
-function notifyTelegram(){
-
-fetch("https://api.telegram.org/bot8702884424:AAEqRe5wr6zHrAgzOphFhvydtDyLJsfWpM8/sendMessage?chat_id=1681052146&text=❤️ Humaira pressed YES on the apology page")
-
+fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`)
 .catch(()=>{});
 
 }
 
-yesBtn.onclick=function(){
+function notifyYes(){
 
-notifyTelegram();
+sendTelegram("❤️ Humaira pressed YES");
 
-yesSound.currentTime=0;
+}
+
+function notifyNo(){
+
+if(yesClicked) return;
+
+/* anti spam (1 second) */
+const now = Date.now();
+
+if(now - lastNoAlert < 1000) return;
+
+lastNoAlert = now;
+
+sendTelegram("😅 Humaira tried pressing NO");
+
+}
+
+/* ============================= */
+/* FLOATING HEARTS BACKGROUND */
+/* ============================= */
+
+setInterval(()=>{
+
+let heart = document.createElement("div");
+
+heart.innerHTML = "💖";
+heart.className = "bg-heart";
+
+heart.style.left = Math.random()*100+"vw";
+heart.style.animationDuration = 6 + Math.random()*4 + "s";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),8000);
+
+},700);
+
+
+/* ============================= */
+/* YES BUTTON */
+/* ============================= */
+
+yesBtn.onclick = function(){
+
+yesClicked = true;
+
+/* disable NO */
+noBtn.style.pointerEvents = "none";
+
+/* telegram */
+notifyYes();
+
+/* sound */
+yesSound.currentTime = 0;
 yesSound.play();
 
-document.querySelector(".card").style.opacity=0;
+/* hide card */
+document.querySelector(".card").style.opacity = 0;
+
+/* show final screen */
 
 setTimeout(()=>{
 
-final.style.opacity=1;
-final.style.pointerEvents="auto";
+final.style.opacity = 1;
+final.style.pointerEvents = "auto";
 
 typeMessage();
 confetti();
@@ -360,17 +313,20 @@ confetti();
 
 };
 
-/* typewriter */
 
-const message="You just made my day Humaira. I will always protect your smile... You are very special to me ❤️";
+/* ============================= */
+/* TYPEWRITER MESSAGE */
+/* ============================= */
 
-let i=0;
+const message = "You just made my day Humaira. I will always protect your smile... You are very special to me ❤️";
+
+let i = 0;
 
 function typeMessage(){
 
-if(i<message.length){
+if(i < message.length){
 
-typeText.innerHTML+=message.charAt(i);
+typeText.innerHTML += message.charAt(i);
 i++;
 
 setTimeout(typeMessage,40);
@@ -379,18 +335,21 @@ setTimeout(typeMessage,40);
 
 }
 
-/* confetti */
+
+/* ============================= */
+/* CONFETTI HEARTS */
+/* ============================= */
 
 function confetti(){
 
 for(let i=0;i<50;i++){
 
-let c=document.createElement("div");
+let c = document.createElement("div");
 
-c.className="confetti";
-c.innerHTML="💖";
+c.className = "confetti";
+c.innerHTML = "💖";
 
-c.style.left=Math.random()*100+"vw";
+c.style.left = Math.random()*100+"vw";
 
 document.body.appendChild(c);
 
@@ -400,16 +359,104 @@ setTimeout(()=>c.remove(),3000);
 
 }
 
-/* music */
 
-musicBtn.onclick=function(){
+/* ============================= */
+/* DESKTOP SMOOTH ESCAPE */
+/* ============================= */
+
+if(!isMobile){
+
+document.addEventListener("mousemove",(e)=>{
+
+if(yesClicked) return;
+
+const rect = noBtn.getBoundingClientRect();
+
+const centerX = rect.left + rect.width/2;
+const centerY = rect.top + rect.height/2;
+
+const dx = centerX - e.clientX;
+const dy = centerY - e.clientY;
+
+const distance = Math.sqrt(dx*dx + dy*dy);
+
+if(distance < 120){
+
+notifyNo();
+
+noSound.currentTime = 0;
+noSound.play();
+
+const angle = Math.atan2(dy,dx);
+
+let moveX = Math.cos(angle)*50;
+let moveY = Math.sin(angle)*50;
+
+let newX = rect.left + moveX;
+let newY = rect.top + moveY;
+
+/* keep inside screen */
+
+newX = Math.max(10, Math.min(window.innerWidth - rect.width - 10, newX));
+newY = Math.max(10, Math.min(window.innerHeight - rect.height - 10, newY));
+
+noBtn.style.position = "fixed";
+noBtn.style.left = newX + "px";
+noBtn.style.top = newY + "px";
+
+}
+
+});
+
+}
+
+
+/* ============================= */
+/* MOBILE INTERACTION */
+/* ============================= */
+
+function moveNo(){
+
+if(yesClicked) return;
+
+notifyNo();
+
+noSound.currentTime = 0;
+noSound.play();
+
+let rect = noBtn.getBoundingClientRect();
+
+let x = Math.random()*(window.innerWidth - rect.width);
+let y = Math.random()*(window.innerHeight - rect.height);
+
+noBtn.style.position = "fixed";
+noBtn.style.left = x + "px";
+noBtn.style.top = y + "px";
+
+}
+
+/* mobile triggers */
+
+noBtn.addEventListener("touchstart",moveNo);
+noBtn.addEventListener("click",moveNo);
+
+
+/* ============================= */
+/* MUSIC BUTTON */
+/* ============================= */
+
+musicBtn.onclick = function(){
 
 if(musicAudio.paused){
+
 musicAudio.play();
 musicBtn.innerHTML="🔊";
+
 }else{
+
 musicAudio.pause();
 musicBtn.innerHTML="🎵";
+
 }
 
 };
